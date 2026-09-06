@@ -9,6 +9,8 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+`.env.example` を `.env` にコピーし、`OPENAI_API_KEY` に自分のキーを設定してください。
+
 ## 起動
 
 ```bash
@@ -28,9 +30,10 @@ pytest
 
 ```
 app/
-  main.py            アプリのエントリポイント
-  core/config.py      設定 (環境変数)
-  routers/            エンドポイント定義
-  schemas/            Pydanticモデル
-tests/                テストコード
+  main.py               アプリのエントリポイント
+  core/config.py        設定 (環境変数)
+  core/openai_client.py OpenAIクライアント取得
+  routers/               エンドポイント定義
+  schemas/               Pydanticモデル
+tests/                   テストコード
 ```
