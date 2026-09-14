@@ -1,22 +1,28 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from openai import OpenAIError
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
 
 from app.core.config import get_settings
-from app.routers import chat, health, items
+from app.db.base import Base
+from app.db.session import engine
+from app.routers import chat, health, items, products
 
 settings = get_settings()
 
-app = FastAPI(title=settings.app_name, debug=settings.debug)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan)
 
 app.include_router(health.router)
 app.include_router(items.router)
+app.include_router(products.router)
 app.include_router(chat.router)
-
-
-@app.exception_handler(OpenAIError)
-def openai_error_handler(request: Request, exc: OpenAIError) -> JSONResponse:
-    return JSONResponse(status_code=503, content={"detail": str(exc)})
 
 
 @app.get("/")

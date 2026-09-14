@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "llm-web-api"
     debug: bool = False
+    database_url: str = "postgresql+psycopg2://postgres:postgres@localhost:5433/llm_web_api"
     openai_api_key: str = ""
     openai_model: str = "gpt-4o-mini"
 
