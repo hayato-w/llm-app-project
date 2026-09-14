@@ -9,7 +9,15 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-`.env.example` を `.env` にコピーし、`OPENAI_API_KEY` に自分のキーを設定してください。
+`.env.example` を `.env` にコピーし、`DATABASE_URL`(PostgreSQL接続先) を必要に応じて設定してください。
+
+PostgreSQLはDocker Composeで起動できます。
+
+```bash
+docker compose up -d
+```
+
+`products` テーブルはアプリ起動時に自動作成されます。
 
 ## 起動
 
@@ -32,7 +40,9 @@ pytest
 app/
   main.py               アプリのエントリポイント
   core/config.py        設定 (環境変数)
-  core/openai_client.py OpenAIクライアント取得
+  db/base.py            SQLAlchemy Base
+  db/session.py         DBエンジン・セッション (get_db)
+  models/                SQLAlchemyモデル (DBテーブル定義)
   routers/               エンドポイント定義
   schemas/               Pydanticモデル
 tests/                   テストコード

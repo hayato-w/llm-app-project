@@ -11,7 +11,3 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     history: list[ChatMessage] = Field(default_factory=list)
-
-
-class ChatResponse(BaseModel):
-    reply: str
