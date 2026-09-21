@@ -10,6 +10,7 @@ from app.db.session import get_db
 from app.routers.products import PRODUCT_TOOL_HANDLERS, PRODUCT_TOOLS
 from app.schemas.chat import ChatRequest
 from app.schemas.product import responseSchema
+from app.server.service_bedrock import bedrock_chat_function
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -77,3 +78,11 @@ def chat(
     # tool_callsが無くなった = モデルが最終的な自然文の回答を返した状態
     # これをresponseSchema(response: str)に詰めて返却する
     return responseSchema(response=message.content or "")
+
+
+@router.post("/bedrock", response_model=responseSchema)
+def chat_bedrock(
+    payload: ChatRequest,
+    db: Session = Depends(get_db),
+) -> responseSchema:
+    return bedrock_chat_function(payload, db)

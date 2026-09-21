@@ -39,32 +39,34 @@ def get_products_by_category_tool(db: Session, category: str) -> list[dict[str, 
 
 PRODUCT_TOOLS: list[dict[str, Any]] = [
     {
-        "type": "function",
-        "function": {
+        "toolSpec": {
             "name": "list_products",
             "description": "登録されている商品を全件取得する。",
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "additionalProperties": False,
+            "inputSchema": {
+                "json": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": False,
+                }
             },
         },
     },
     {
-        "type": "function",
-        "function": {
+        "toolSpec": {
             "name": "get_products_by_category",
             "description": "指定したカテゴリに属する商品を取得する。",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "category": {
-                        "type": "string",
-                        "description": "検索したい商品のカテゴリ名",
+            "inputSchema": {
+                "json": {
+                    "type": "object",
+                    "properties": {
+                        "category": {
+                            "type": "string",
+                            "description": "検索したい商品のカテゴリ名",
+                        },
                     },
-                },
-                "required": ["category"],
-                "additionalProperties": False,
+                    "required": ["category"],
+                    "additionalProperties": False,
+                }
             },
         },
     },
