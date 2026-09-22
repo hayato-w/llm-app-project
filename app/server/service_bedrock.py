@@ -1,11 +1,12 @@
 import boto3
 from botocore.exceptions import ClientError
-from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.routers.products import PRODUCT_TOOL_HANDLERS, PRODUCT_TOOLS
 from app.schemas.chat import ChatRequest
 from app.schemas.product import responseSchema
+from app.handler import ErrorHandler
+import traceback
 
 # 使用するモデルIDの指定 (例: Claude 3.5 Sonnet)
 MODEL_ID = "amazon.nova-lite-v1:0"
@@ -74,8 +75,14 @@ def bedrock_chat_function(payload: ChatRequest, db: Session) -> responseSchema:
             completion = bedrock_client.converse(messages=messages, **request_kwargs)
             output_message = completion["output"]["message"]
 
-    except ClientError as e:
-        raise HTTPException(status_code=502, detail=f"Bedrock APIエラーが発生しました: {e}") from e
+    except ClientError:
+        error_trace = traceback.format_exc()
+        raise ErrorHandler(
+            status_code=500,
+            title="Bedrock APIエラーが発生しました",
+            detail=error_trace,
+        )
+
 
     # stopReasonが"end_turn" = モデルが最終的な自然文の回答を返した状態
     return responseSchema(response=_extract_text(output_message))
