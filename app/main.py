@@ -6,7 +6,8 @@ from fastapi import FastAPI
 from app.core.config import get_settings
 from app.db.base import Base
 from app.db.session import engine
-from app.routers import chat, health, items, products
+from app.handler import ErrorHandler, error_handler
+from app.routers import chat, items, products
 
 settings = get_settings()
 
@@ -18,8 +19,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 
 app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan)
+app.add_exception_handler(ErrorHandler, error_handler)
 
-app.include_router(health.router)
 app.include_router(items.router)
 app.include_router(products.router)
 app.include_router(chat.router)
