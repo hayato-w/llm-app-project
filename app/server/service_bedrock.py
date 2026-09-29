@@ -2,7 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 from sqlalchemy.orm import Session
 
-from app.routers.products import PRODUCT_TOOL_HANDLERS, PRODUCT_TOOLS
+from app.server.tools import PRODUCT_TOOL_HANDLERS, PRODUCT_TOOLS
 from app.schemas.chat import ChatRequest
 from app.schemas.product import responseSchema
 from app.handler import ErrorHandler
@@ -34,6 +34,7 @@ def bedrock_chat_function(payload: ChatRequest, db: Session) -> responseSchema:
         "modelId": MODEL_ID,
         "inferenceConfig": {"maxTokens": 500, "temperature": 0.7},
         "toolConfig": {"tools": PRODUCT_TOOLS},
+        "system": [{"text": "あなたは日本語で応答するアシスタントです。ユーザーへの最終回答は必ず日本語で書いてください。"}],
     }
 
     try:
